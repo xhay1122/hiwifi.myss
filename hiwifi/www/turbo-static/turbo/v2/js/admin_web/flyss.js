@@ -10,7 +10,7 @@ $(function () {
             'act': 'config',
             'ss_server_choice': choice ? choice : ''
         };
-        $.post('easucks/ss_ajax', request_data, function(data){
+        $.post('flyss/ss_ajax', request_data, function(data){
             g_data_ss['config'] = data;
             if(! $.isEmptyObject(g_data_ss['config'])){
                 var i;
@@ -51,7 +51,7 @@ $(function () {
 
     //获取SS运行信息
     function get_ss_status(formdata_refresh) {
-        $.post('easucks/ss_ajax', {'act': 'status'}, function(data){
+        $.post('flyss/ss_ajax', {'act': 'status'}, function(data){
             g_data_ss['status'] = data;
             //暂存表单内容，供稍后对比是否有改动时参考
             if (formdata_refresh)
@@ -61,12 +61,6 @@ $(function () {
                 $('#ss_auto_start').removeClass('off').addClass('on');
             }else{
                 $('#ss_auto_start').removeClass('on').addClass('off');
-            }
-
-            if(data.fifa19_region_lock == 'HK'){
-                $('#fifa19_region_lock').removeClass('off').addClass('on');
-            }else{
-                $('#fifa19_region_lock').removeClass('on').addClass('off');
             }
 
             //SS运行状态
@@ -109,61 +103,51 @@ $(function () {
         }, 'json');
     }
 
-    //获取SS版本信息
-    function get_ss_version() {
-        $.post('easucks/ss_ajax', {'act': 'version'}, function(data){
-            g_data_ss['version'] = data;
-            if(parseInt(data['local_version']) < parseInt(data['remote_version'])){
-                $('#ss_update_bt').text('有新版本');
-            }
-        }, 'json');
-    }
-
     //获取强制走代理域名列表
     function get_domain_force() {
-        $.post('easucks/ss_ajax', {'act': 'domain_force'}, function(data){
+        $.post('flyss/ss_ajax', {'act': 'domain_force'}, function(data){
             $('#domain_force_value').val(data).prop("disabled", false);
         });
     }
 
     //获取强制不走代理域名列表
     function get_domain_ignore() {
-        $.post('easucks/ss_ajax', {'act': 'domain_ignore'}, function(data){
+        $.post('flyss/ss_ajax', {'act': 'domain_ignore'}, function(data){
             $('#domain_ignore_value').val(data).prop("disabled", false);
         });
     }
 
     //获取强制走代理的局域网源IP列表
     function get_ipsrc_force() {
-        $.post('easucks/ss_ajax', {'act': 'ipsrc_force'}, function(data){
+        $.post('flyss/ss_ajax', {'act': 'ipsrc_force'}, function(data){
             $('#ipsrc_force_value').val(data).prop("disabled", false);
         });
     }
 
     //获取强制走代理的互联网目的IP列表
     function get_ipdst_force() {
-        $.post('easucks/ss_ajax', {'act': 'ipdst_force'}, function(data){
+        $.post('flyss/ss_ajax', {'act': 'ipdst_force'}, function(data){
             $('#ipdst_force_value').val(data).prop("disabled", false);
         });
     }
 
     //获取强制不走代理的局域网源IP列表
     function get_ipsrc_ignore() {
-        $.post('easucks/ss_ajax', {'act': 'ipsrc_ignore'}, function(data){
+        $.post('flyss/ss_ajax', {'act': 'ipsrc_ignore'}, function(data){
             $('#ipsrc_ignore_value').val(data).prop("disabled", false);
         });
     }
 
     //获取强制不走代理的互联网目的IP列表
     function get_ipdst_ignore() {
-        $.post('easucks/ss_ajax', {'act': 'ipdst_ignore'}, function(data){
+        $.post('flyss/ss_ajax', {'act': 'ipdst_ignore'}, function(data){
             $('#ipdst_ignore_value').val(data).prop("disabled", false);
         });
     }
 
     //获取过滤设备列表
     function get_mac_ignore() {
-        $.post('easucks/ss_ajax', {'act': 'mac_ignore'}, function(data){
+        $.post('flyss/ss_ajax', {'act': 'mac_ignore'}, function(data){
             $('#mac_ignore_value').val(data).prop("disabled", false);
         });
     }
@@ -304,7 +288,7 @@ $(function () {
             'act':  'domain_force_save',
             'list': $('#domain_force_value').val()
         };
-        $.post('easucks/ss_ajax', request_data, function(data){
+        $.post('flyss/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
                 title: '域名列表保存成功，但未生效，需重启插件',
@@ -326,7 +310,7 @@ $(function () {
             'act':  'domain_ignore_save',
             'list': $('#domain_ignore_value').val()
         };
-        $.post('easucks/ss_ajax', request_data, function(data){
+        $.post('flyss/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
                 title: '域名列表保存成功，但未生效，需重启插件',
@@ -348,7 +332,7 @@ $(function () {
             'act':  'ipsrc_force_save',
             'list': $('#ipsrc_force_value').val()
         };
-        $.post('easucks/ss_ajax', request_data, function(data){
+        $.post('flyss/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
                 title: 'IP列表保存成功，并且已生效，无需重启',
@@ -370,7 +354,7 @@ $(function () {
             'act':  'ipdst_force_save',
             'list': $('#ipdst_force_value').val()
         };
-        $.post('easucks/ss_ajax', request_data, function(data){
+        $.post('flyss/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
                 title: 'IP列表保存成功，并且已生效，无需重启',
@@ -392,7 +376,7 @@ $(function () {
             'act':  'ipsrc_ignore_save',
             'list': $('#ipsrc_ignore_value').val()
         };
-        $.post('easucks/ss_ajax', request_data, function(data){
+        $.post('flyss/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
                 title: 'IP列表保存成功，并且已生效，无需重启',
@@ -414,7 +398,7 @@ $(function () {
             'act':  'ipdst_ignore_save',
             'list': $('#ipdst_ignore_value').val()
         };
-        $.post('easucks/ss_ajax', request_data, function(data){
+        $.post('flyss/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
                 title: 'IP列表保存成功，并且已生效，无需重启',
@@ -436,7 +420,7 @@ $(function () {
             'act':  'mac_ignore_save',
             'list': $('#mac_ignore_value').val()
         };
-        $.post('easucks/ss_ajax', request_data, function(data){
+        $.post('flyss/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
                 title: 'MAC列表保存成功，重启SS后生效',
@@ -463,7 +447,7 @@ $(function () {
         var request_data = $form.serializeArray();
         request_data = HiWiFi.simplifyJSON(request_data);
         request_data['act'] = 'save';
-        $.post('easucks/ss_ajax', request_data, function(data){
+        $.post('flyss/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
                 title: [HiWiFi.i18n.prop("g_set_success")],
@@ -488,7 +472,7 @@ $(function () {
         var ss_restart = function(){
             $bt.text('重启中...');
             var request_data = {'act': 'restart', 'ss_server_choice': $('#ss_server_nodes').val()};
-            $.post('easucks/ss_ajax', request_data, function(data){
+            $.post('flyss/ss_ajax', request_data, function(data){
                 get_ss_status(true);
                 HiWiFi.popDialog({
                     type: "G-text",
@@ -504,7 +488,7 @@ $(function () {
             var request_data = $form.serializeArray();
             request_data = HiWiFi.simplifyJSON(request_data);
             request_data['act'] = 'save';
-            $.post('easucks/ss_ajax', request_data, function(data){
+            $.post('flyss/ss_ajax', request_data, function(data){
                 ss_restart();
             });
         }else{
@@ -527,7 +511,7 @@ $(function () {
         var ss_start = function(){
             $bt.text(HiWiFi.i18n.prop("g_startting"));
             var request_data = {'act': 'start', 'ss_server_choice': $('#ss_server_nodes').val()};
-            $.post('easucks/ss_ajax', request_data, function(data){
+            $.post('flyss/ss_ajax', request_data, function(data){
                 get_ss_status(true);
                 HiWiFi.popDialog({
                     type: "G-text",
@@ -543,7 +527,7 @@ $(function () {
             var request_data = $form.serializeArray();
             request_data = HiWiFi.simplifyJSON(request_data);
             request_data['act'] = 'save';
-            $.post('easucks/ss_ajax', request_data, function(data){
+            $.post('flyss/ss_ajax', request_data, function(data){
                 ss_start();
             });
         }else{
@@ -560,7 +544,7 @@ $(function () {
         $bt.addClass("disable");
         $bt.text(HiWiFi.i18n.prop("g_processing"));
         var request_data = {'act': 'stop'};
-        $.post('easucks/ss_ajax', request_data, function(data){
+        $.post('flyss/ss_ajax', request_data, function(data){
             get_ss_status(false);
             HiWiFi.popDialog({
                 type: "G-text",
@@ -622,31 +606,8 @@ $(function () {
 
             $bt.prop('disabled', true);
 
-            $.post('easucks/ss_ajax', request_data, function(data){
+            $.post('flyss/ss_ajax', request_data, function(data){
                 if (data['ss_enabled'] == 'false') {
-                    $bt.removeClass("on").addClass("off");
-                }else{
-                    $bt.removeClass("off").addClass("on");
-                }
-                $bt.prop('disabled', false);
-            }, 'json');
-        }
-    });
-
-    //FIFA19强制锁定中亚服功能
-    $("#fifa19_region_lock").on("click", function () {
-        var $bt = $(this);
-        if(! $bt.prop('disabled')){
-            var request_data = {'act': 'fifa19_region_lock'};
-            if ($bt.hasClass("on"))
-                request_data['region'] = 'disable';
-            else
-                request_data['region'] = 'HK';
-
-            $bt.prop('disabled', true);
-
-            $.post('easucks/ss_ajax', request_data, function(data){
-                if (data['fifa19_region_lock'] != 'HK') {
                     $bt.removeClass("on").addClass("off");
                 }else{
                     $bt.removeClass("off").addClass("on");
@@ -730,7 +691,7 @@ $(function () {
         $('#ss_server_name').val(random_name).select();
         $('#ss_server_ipad').val('xxx.xxx.xxx.xxx');
         $('#ss_server_port').val('1717');
-        $('#ss_server_pass').val('easucks');
+        $('#ss_server_pass').val('flyss');
         $('#ss_server_meth').val('rc4-md5');
         $('#ss_runnin_mode').val('gfwlist');
         $('#ss_server_fsop').val('false');
@@ -749,7 +710,7 @@ $(function () {
             'act': 'delete',
             'ss_server_choice': $('#ss_server_nodes').val()
         };
-        $.post('easucks/ss_ajax', request_data, function(data){
+        $.post('flyss/ss_ajax', request_data, function(data){
             get_ss_config();
             HiWiFi.popDialog({
                 type: "G-text",
@@ -769,7 +730,7 @@ $(function () {
     	network_test_bt.css('color', '#909090');
     	network_test_result.css('color', 'red');
     	network_test_result.text('测试中...');
-    	$.post('easucks/ss_ajax', {'act': 'network_test'}, function(data){
+    	$.post('flyss/ss_ajax', {'act': 'network_test'}, function(data){
 				if(data['code'] != "200"){
         	network_test_result.text('测试失败');
         }

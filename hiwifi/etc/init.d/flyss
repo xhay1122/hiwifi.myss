@@ -2,8 +2,8 @@
 START=99
 STOP=99
 
-NAME=easucks
-CNAME=FIFA助手
+NAME=flyss
+CNAME=FLY-SS
 DESC="socks5 proxy redirector"
 DAEMON=/usr/bin/ss-redir
 PIDFILE=/var/run/$NAME.pid

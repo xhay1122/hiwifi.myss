@@ -1,6 +1,6 @@
-NAME=FIFA助手
-DOWNFROM=https://yourdownloadmirror/downloads
-FILENAME=yourpackagename.tar.gz
+NAME=FLY-SS
+DOWNFROM=https://raw.githubusercontent.com/xhay1122/hiwifi.myss/master/
+FILENAME=hiwifi-flyss-20200304.tar.gz
 echo ">>>正在下载$NAME..."
 curl -# -k $DOWNFROM/$FILENAME -o /tmp/$FILENAME > /dev/null
 if [ $? -eq 0 ]; then
@@ -12,7 +12,7 @@ if [ $? -eq 0 ]; then
         }
         if [ $(grep $NAME /usr/lib/lua/luci/view/admin_web/home.htm|wc -l) -lt 1 ]; then
             echo ">>>修改首页按钮..."
-            sed -i 's/admin_web.*upgrade.*%>/admin_web'"'"','"'"'easucks'"'"')%>">'"$NAME"'/' /usr/lib/lua/luci/view/admin_web/home.htm
+            sed -i 's/admin_web.*upgrade.*%>/admin_web'"'"','"'"'flyss'"'"')%>">'"$NAME"'/' /usr/lib/lua/luci/view/admin_web/home.htm
         fi
     else
         ENTRY="互联网页"
@@ -22,7 +22,7 @@ if [ $? -eq 0 ]; then
         }
         if [ $(grep $NAME /usr/lib/lua/luci/view/admin_web/network/index.htm|wc -l) -lt 1 ]; then
             echo ">>>在互联网页插入按钮..."
-            sed -i 's/<ul id="advanced_setup">/<ul id="advanced_setup">\n<li><a href="<%=luci.dispatcher.build_url('"'"'admin_web'"'"','"'"'easucks'"'"')%>">'"$NAME"'<\/a><\/li>/' /usr/lib/lua/luci/view/admin_web/network/index.htm
+            sed -i 's/<ul id="advanced_setup">/<ul id="advanced_setup">\n<li><a href="<%=luci.dispatcher.build_url('"'"'admin_web'"'"','"'"'flyss'"'"')%>">'"$NAME"'<\/a><\/li>/' /usr/lib/lua/luci/view/admin_web/network/index.htm
         fi
     fi
 	
@@ -34,7 +34,7 @@ if [ $? -eq 0 ]; then
     ul_end_line_num=`expr $mobile_router_control_line_num + $ul_end_relative_line_num - 1`
     ul_end_line_num_sub_1=`expr $ul_end_line_num - 1`
     head -n $ul_end_line_num_sub_1 home.htm > new_home.htm
-    echo '<li> <a href="<%=luci.dispatcher.build_url('"'"'admin_web'"'"','"'"'easucks'"'"')%>" target="_blank">安全上网<span class="right-bar"><em class="enter-pointer"></em></span></a> </li>' >> new_home.htm
+    echo '<li> <a href="<%=luci.dispatcher.build_url('"'"'admin_web'"'"','"'"'flyss'"'"')%>" target="_blank">安全上网<span class="right-bar"><em class="enter-pointer"></em></span></a> </li>' >> new_home.htm
     tail -n +$ul_end_line_num home.htm >> new_home.htm
     mv new_home.htm home.htm
     echo -e '...[\e[32m手机版后台安装成功\e[0m]'
@@ -51,8 +51,6 @@ if [ $? -eq 0 ]; then
     echo "."
     echo ">>>正在安装$NAME..."
     tar zxf /tmp/$FILENAME -C /
-    rm -f /usr/bin/ss-local
-    rm -f /usr/bin/ss-tunnel
     rm -f /tmp/$FILENAME
     echo ">>>安装完成！"
     if [ -f /var/run/luci-indexcache ]; then

@@ -1,7 +1,7 @@
 <%
 --[[
-    Info      FIFA助手插件页
-    Author    Paull  <paull@qq.com>
+    Info      FLY-SS插件页
+    Author    xhay  <xhay1122@gmail.com>
     Copyright 2019
 ]]--
 local build  = "20190122"
@@ -61,26 +61,22 @@ end
                             <li><a href="javascript:;" id="ss_setup_domain_bt">域名列表管理</a></li>
                             <li><a href="javascript:;" id="ss_setup_ip_bt">IP列表管理</a></li>
                             <li><a href="javascript:;" id="ss_setup_mac_bt">设备黑名单管理</a></li>
-                            <li><a href="javascript:;" id="ss_update_bt">插件升级</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
 
             <!-- SS节点部分 -->
-            <% include('admin_web/easucks/ss_setup_node') %>
+            <% include('admin_web/flyss/ss_setup_node') %>
 
             <!-- SS域名部分 -->
-            <% include('admin_web/easucks/ss_setup_domain') %>
+            <% include('admin_web/flyss/ss_setup_domain') %>
 
             <!-- SSIP部分 -->
-            <% include('admin_web/easucks/ss_setup_ip') %>
+            <% include('admin_web/flyss/ss_setup_ip') %>
 
             <!-- SS MAC部分 -->
-            <% include('admin_web/easucks/ss_setup_mac') %>
-
-            <!-- 插件升级部分 -->
-            <% include('admin_web/easucks/update') %>
+            <% include('admin_web/flyss/ss_setup_mac') %>
 
         </div>
     </div>
@@ -90,6 +86,6 @@ end
 <!-- 通用模块的专属js -->
 <script type="text/javascript" src="<%=resource%>/v2/js/admin_web/general_module.js?b=<%=build%>"></script>
 <!-- SS插件页的专属js -->
-<script type="text/javascript" src="<%=resource%>/v2/js/admin_web/easucks.js?b=<%=build%>"></script>
+<script type="text/javascript" src="<%=resource%>/v2/js/admin_web/flyss.js?b=<%=build%>"></script>
 </body>
 </html>

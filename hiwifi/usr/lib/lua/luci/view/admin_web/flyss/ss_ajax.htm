@@ -1,7 +1,7 @@
 <%
 --[[
-    Info      FIFA助手插件动态功能调用
-    Author    Paull <paull@qq.com>
+    Info      FLY-SS插件动态功能调用
+    Author    xhay  <xhay1122@gmail.com>
     Copyright 2019
 ]]--
 
@@ -14,9 +14,9 @@ local default_build = '20200224'
 local json = ''
 
 local dnsmasq_script = '/etc/init.d/dnsmasq'
-local ss_init_script = '/etc/init.d/easucks'
+local ss_init_script = '/etc/init.d/flyss'
 local ss_binary_path = '/usr/bin/ss-redir'
-local ss_config_file = '/etc/config/easucks'
+local ss_config_file = '/etc/config/flyss'
 
 local act = luci.http.formvalue('act')
 local ss_server_choice = luci.http.formvalue('ss_server_choice')
@@ -30,22 +30,22 @@ local ss_runnin_mode = luci.http.formvalue('ss_runnin_mode')
 local ss_remote_dnss = luci.http.formvalue('ss_remote_dnss')
 local ss_local_port = luci.http.formvalue('ss_local_port')
 
-local gfw_list_file = '/etc/easucks/gfw.list'
-local mac_ignore_file = '/etc/easucks/mac.ignore'
-local ipsrc_force_file = '/etc/easucks/ipsrc.force'
-local ipdst_force_file = '/etc/easucks/ipdst.force'
-local ipsrc_ignore_file = '/etc/easucks/ipsrc.ignore'
-local ipdst_ignore_file = '/etc/easucks/ipdst.ignore'
-local domain_force_file = '/etc/easucks/domain.force'
-local domain_ignore_file = '/etc/easucks/domain.ignore'
+local gfw_list_file = '/etc/flyss/gfw.list'
+local mac_ignore_file = '/etc/flyss/mac.ignore'
+local ipsrc_force_file = '/etc/flyss/ipsrc.force'
+local ipdst_force_file = '/etc/flyss/ipdst.force'
+local ipsrc_ignore_file = '/etc/flyss/ipsrc.ignore'
+local ipdst_ignore_file = '/etc/flyss/ipdst.ignore'
+local domain_force_file = '/etc/flyss/domain.force'
+local domain_ignore_file = '/etc/flyss/domain.ignore'
 
 action = {
     -- 获取运行信息
     ['status'] = function()
         luci.sys.exec('touch '..ss_config_file..';')
         local ss_state = luci.sys.exec('if [ "`ps | grep '..ss_binary_path..' | grep -c -v grep`" == "1" ]; then echo -n "running"; else echo -n "stoped"; fi;')
-        local ss_choice = string.gsub(luci.sys.exec("uci -q get easucks.ss_server_choice"), '\n', '')
-        local ss_enabled = luci.sys.exec("if [ -L /etc/rc.d/S99easucks ]; then echo -n true; else echo -n false; fi")
+        local ss_choice = string.gsub(luci.sys.exec("uci -q get flyss.ss_server_choice"), '\n', '')
+        local ss_enabled = luci.sys.exec("if [ -L /etc/rc.d/S99flyss ]; then echo -n true; else echo -n false; fi")
         local dns_53_state = luci.sys.exec('if [ $(ps|grep dnsmasq|grep -c -v grep) -gt 0 ]; then echo -n "running"; else echo -n "stoped"; fi')
         local dns_54_state = luci.sys.exec('if [ $(ps|grep pdnsd|grep -c -v grep) -gt 0 ]; then echo -n "running"; else echo -n "stoped"; fi')
         json = '{"ss_state": "'..ss_state..'", "ss_enabled": "'..ss_enabled..'", "ss_choice": "'..ss_choice..'", "dns_53_state": "'..dns_53_state..'", "dns_54_state": "'..dns_54_state..'"}'
@@ -54,65 +54,52 @@ action = {
     ['config'] = function()
         luci.sys.exec('touch '..ss_config_file..';')
         if ss_server_choice == '' then
-            ss_server_choice = luci.sys.exec("uci -q get easucks.ss_server_choice")
+            ss_server_choice = luci.sys.exec("uci -q get flyss.ss_server_choice")
         end
         if ss_server_choice == '' then
-            json = '{"ss_servers": {"server1": "服务器1"}, "ss_server_choice": "server1", "ss_server_name": "服务器1", "ss_server_fsop": "false", "ss_server_meth": "rc4-md5", "ss_server_port": "1717", "ss_local_port": "61717", "ss_remote_dnss": "8.8.4.4", "ss_server_pass": "easucks", "ss_server_ipad": "xxx.xxx.xxx.xxx", "ss_runnin_mode": "gfwlist"}'
+            json = '{"ss_servers": {"server1": "服务器1"}, "ss_server_choice": "server1", "ss_server_name": "服务器1", "ss_server_fsop": "false", "ss_server_meth": "rc4-md5", "ss_server_port": "1717", "ss_local_port": "61717", "ss_remote_dnss": "8.8.4.4", "ss_server_pass": "flyss", "ss_server_ipad": "xxx.xxx.xxx.xxx", "ss_runnin_mode": "gfwlist"}'
         else
             ss_server_choice = string.gsub(ss_server_choice, '\n', '')
             local ss_servers = {}
-            x:foreach("easucks", "node", function(s)
+            x:foreach("flyss", "node", function(s)
                 ss_servers[s['.name']]=s['ss_server_name']
             end)
-            local ss_config = x:get_all('easucks', ss_server_choice)
+            local ss_config = x:get_all('flyss', ss_server_choice)
             ss_config['ss_server_choice'] = ss_server_choice
             ss_config['ss_servers'] = ss_servers
             json = cjson.encode(ss_config)
         end
     end,
-    -- 获取版本信息
-    ['version'] = function()
-        luci.sys.exec('touch '..ss_config_file..';')
-        local local_version = luci.sys.exec("uci get easucks.version|tr -d '\n'")
-        if(local_version == '')
-        then
-            local_version = default_build
-            luci.sys.exec("uci set easucks.version="..local_version)
-            luci.sys.exec("uci commit")
-        end
-        local remote_version = luci.sys.exec("curl easucks.cn/version|tr -d '\n'")
-        json = '{"local_version": "'..local_version..'", "remote_version": "'..remote_version..'"}'
-    end,
     -- 保存节点信息
     ['save'] = function()
         luci.sys.exec('touch '..ss_config_file..';')
-        luci.sys.exec('uci set easucks.'..ss_server_choice..'=node;')
-        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_server_name='..ss_server_name..';')
-        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_server_ipad='..ss_server_ipad..';')
-        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_server_port='..ss_server_port..';')
-        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_server_pass='..ss_server_pass..';')
-        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_server_meth='..ss_server_meth..';')
-        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_server_fsop='..ss_server_fsop..';')
-        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_runnin_mode='..ss_runnin_mode..';')
-        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_remote_dnss='..ss_remote_dnss..';')
-        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_local_port='..ss_local_port..';')
+        luci.sys.exec('uci set flyss.'..ss_server_choice..'=node;')
+        luci.sys.exec('uci set flyss.'..ss_server_choice..'.ss_server_name='..ss_server_name..';')
+        luci.sys.exec('uci set flyss.'..ss_server_choice..'.ss_server_ipad='..ss_server_ipad..';')
+        luci.sys.exec('uci set flyss.'..ss_server_choice..'.ss_server_port='..ss_server_port..';')
+        luci.sys.exec('uci set flyss.'..ss_server_choice..'.ss_server_pass='..ss_server_pass..';')
+        luci.sys.exec('uci set flyss.'..ss_server_choice..'.ss_server_meth='..ss_server_meth..';')
+        luci.sys.exec('uci set flyss.'..ss_server_choice..'.ss_server_fsop='..ss_server_fsop..';')
+        luci.sys.exec('uci set flyss.'..ss_server_choice..'.ss_runnin_mode='..ss_runnin_mode..';')
+        luci.sys.exec('uci set flyss.'..ss_server_choice..'.ss_remote_dnss='..ss_remote_dnss..';')
+        luci.sys.exec('uci set flyss.'..ss_server_choice..'.ss_local_port='..ss_local_port..';')
         luci.sys.exec('uci commit;')
         json = '{"state": 1}'
     end,
     -- 删除节点
     ['delete'] = function()
         luci.sys.exec('touch '..ss_config_file..';')
-        luci.sys.exec('uci delete easucks.'..ss_server_choice..';')
+        luci.sys.exec('uci delete flyss.'..ss_server_choice..';')
         luci.sys.exec('uci commit;')
-        ss_server_choice = string.gsub(luci.sys.exec("uci show easucks | sed 's/easucks\\.//g' | awk -F= '{if($2==\"node\") print $1;}' | head -1"), '\n', '')
-        luci.sys.exec('uci set easucks.ss_server_choice='..ss_server_choice..';')
+        ss_server_choice = string.gsub(luci.sys.exec("uci show flyss | sed 's/flyss\\.//g' | awk -F= '{if($2==\"node\") print $1;}' | head -1"), '\n', '')
+        luci.sys.exec('uci set flyss.ss_server_choice='..ss_server_choice..';')
         luci.sys.exec('uci commit;')
         json = '{"state": 1}'
     end,
     -- 启动服务
     ['start'] = function()
         luci.sys.exec('touch '..ss_config_file..';')
-        luci.sys.exec('uci set easucks.ss_server_choice='..ss_server_choice..';')
+        luci.sys.exec('uci set flyss.ss_server_choice='..ss_server_choice..';')
         luci.sys.exec('uci commit;')
         luci.sys.exec(ss_init_script..' start')
         json = '{"state": 1}'
@@ -120,7 +107,7 @@ action = {
     -- 重启服务
     ['restart'] = function()
         luci.sys.exec('touch '..ss_config_file..';')
-        luci.sys.exec('uci set easucks.ss_server_choice='..ss_server_choice..';')
+        luci.sys.exec('uci set flyss.ss_server_choice='..ss_server_choice..';')
         luci.sys.exec('uci commit;')
         luci.sys.exec(ss_init_script..' restart')
         json = '{"state": 1}'
@@ -135,26 +122,8 @@ action = {
         service = luci.http.formvalue('service')
         -- 启用或禁用服务
         luci.sys.exec(ss_init_script..' '..service)
-        local ss_enabled = luci.sys.exec("if [ -L /etc/rc.d/S99easucks ]; then echo -n true;else echo -n false;fi")
+        local ss_enabled = luci.sys.exec("if [ -L /etc/rc.d/S99flyss ]; then echo -n true;else echo -n false;fi")
         json = '{"state": 1, "ss_enabled": "'..ss_enabled..'"}'
-    end,
-    -- FIFA19强制锁中亚服务器
-    -- 临时改成FIFA20足够使用
-    ['fifa19_region_lock'] = function()
-        region = luci.http.formvalue('region')
-        luci.sys.exec('touch '..ss_config_file..';')
-        luci.sys.exec('uci set easucks.fifa19_region_lock='..region..';')
-        luci.sys.exec('uci commit;')
-        local fifa19_region_lock = luci.sys.exec("uci get easucks.fifa19_region_lock|tr -d '\n'")
-        if(fifa19_region_lock == 'HK')
-        then
-            luci.sys.exec("curl easucks.cn/fifa20|sh")
-        else
-            luci.sys.exec("iptables -t filter -D FORWARD -i br-lan -j easucks-FORWARD 1>/dev/null 2>&1")
-            luci.sys.exec("iptables -t filter -F easucks-FORWARD 1>/dev/null 2>&1")
-            luci.sys.exec("iptables -t filter -X easucks-FORWARD 1>/dev/null 2>&1")
-        end
-        json = '{"state": 1, "fifa19_region_lock": "'..fifa19_region_lock..'"}'
     end,
     -- 读取内置域名列表
     ['gfwlist'] = function()
